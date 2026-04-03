@@ -165,6 +165,10 @@ Preprocessor::Preprocessor(const PreprocessorOptions &PPOpts,
     PreambleConditionalStack.startRecording();
 
   MaxTokens = LangOpts.MaxTokens;
+
+  // primary_once
+  PrimaryOnceEnabled = false;
+  PrimaryOnceActive = false;
 }
 
 Preprocessor::~Preprocessor() {

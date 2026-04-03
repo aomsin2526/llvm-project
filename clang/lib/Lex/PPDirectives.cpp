@@ -2500,7 +2500,7 @@ Preprocessor::ImportAction Preprocessor::HandleHeaderIncludeOrImport(
   // some directives (e.g. #endif of a header guard) will never be seen.
   // Since this will lead to confusing errors, avoid the inclusion.
   if (Action == Enter && File && PreambleConditionalStack.isRecording() &&
-      SourceMgr.isMainFile(File->getFileEntry())) {
+      SourceMgr.isMainFile(File->getFileEntry()) && !PrimaryOnceEnabled) {
     Diag(FilenameTok.getLocation(),
          diag::err_pp_including_mainfile_in_preamble);
     return {ImportAction::None};

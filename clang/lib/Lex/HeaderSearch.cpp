@@ -1397,6 +1397,10 @@ bool HeaderSearch::ShouldEnterIncludeFile(Preprocessor &PP,
                                           FileEntryRef File, bool isImport,
                                           bool ModulesEnabled, Module *M,
                                           bool &IsFirstIncludeOfFile) {
+
+  if (PP.PrimaryOnceActive)
+    return false;
+
   // An include file should be entered if either:
   // 1. This is the first include of the file.
   // 2. This file can be included multiple times, that is it's not an

@@ -425,6 +425,19 @@ void Preprocessor::HandlePragmaOnce(Token &OnceTok) {
   HeaderInfo.MarkFileIncludeOnce(*getCurrentFileLexer()->getFileEntry());
 }
 
+void Preprocessor::HandlePragmaPrimaryOnce(Token &Tok) {
+  if (PrimaryOnceEnabled)
+    return;
+
+  if (!isInPrimaryFile())
+    return;
+
+  HeaderInfo.UnmarkFileIncludeOnce(*getCurrentFileLexer()->getFileEntry());
+
+  PrimaryOnceEnabled = true;
+  HeaderInfo.MarkFilePrimaryOnce(*getCurrentFileLexer()->getFileEntry());
+}
+
 void Preprocessor::HandlePragmaMark(Token &MarkTok) {
   assert(CurPPLexer && "No current lexer?");
 
@@ -995,6 +1008,16 @@ struct PragmaOnceHandler : public PragmaHandler {
                     Token &OnceTok) override {
     PP.CheckEndOfDirective("pragma once");
     PP.HandlePragmaOnce(OnceTok);
+  }
+};
+
+struct PragmaPrimaryOnceHandler : public PragmaHandler {
+  PragmaPrimaryOnceHandler() : PragmaHandler("primary_once") {}
+
+  void HandlePragma(Preprocessor &PP, PragmaIntroducer Introducer,
+                    Token &Tok) override {
+    PP.CheckEndOfDirective("pragma primary_once");
+    PP.HandlePragmaPrimaryOnce(Tok);
   }
 };
 
@@ -2141,6 +2164,7 @@ struct PragmaFinalHandler : public PragmaHandler {
 /// \#pragma GCC poison/system_header/dependency and \#pragma once.
 void Preprocessor::RegisterBuiltinPragmas() {
   AddPragmaHandler(new PragmaOnceHandler());
+  AddPragmaHandler(new PragmaPrimaryOnceHandler());
   AddPragmaHandler(new PragmaMarkHandler());
   AddPragmaHandler(new PragmaPushMacroHandler());
   AddPragmaHandler(new PragmaPopMacroHandler());

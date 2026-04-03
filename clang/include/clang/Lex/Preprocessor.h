@@ -161,7 +161,7 @@ class Preprocessor {
   FileManager       &FileMgr;
   SourceManager     &SourceMgr;
   std::unique_ptr<ScratchBuffer> ScratchBuf;
-  HeaderSearch      &HeaderInfo;
+
   ModuleLoader      &TheModuleLoader;
 
   /// External source of macros.
@@ -314,6 +314,12 @@ public:
   /// limited by a constant value, but also an implementation detail.
   /// If no such check point exists, \c nullptr is returned.
   const char *getCheckPoint(FileID FID, const char *Start) const;
+
+  HeaderSearch &HeaderInfo;
+
+  // primary_once
+  bool PrimaryOnceEnabled;
+  bool PrimaryOnceActive;
 
 private:
   /// The code-completion handler.
@@ -2935,6 +2941,7 @@ private:
 
 public:
   void HandlePragmaOnce(Token &OnceTok);
+  void HandlePragmaPrimaryOnce(Token &Tok);
   void HandlePragmaMark(Token &MarkTok);
   void HandlePragmaPoison();
   void HandlePragmaSystemHeader(Token &SysHeaderTok);

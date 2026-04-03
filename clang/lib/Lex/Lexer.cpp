@@ -3140,6 +3140,13 @@ void Lexer::ReadToEndOfLine(SmallVectorImpl<char> *Result) {
 /// This returns true if Result contains a token, false if PP.Lex should be
 /// called again.
 bool Lexer::LexEndOfFile(Token &Result, const char *CurPtr) {
+  if (PP && PP->PrimaryOnceEnabled)
+  {
+    if (PP->HeaderInfo.getFileInfo(*getFileEntry()).isPragmaPrimaryOnce) {
+      PP->PrimaryOnceActive = true;
+    }
+  }
+
   // If we hit the end of the file while parsing a preprocessor directive,
   // end the preprocessor directive first.  The next token returned will
   // then be the end of file.
@@ -3742,8 +3749,22 @@ LexStart:
   assert(!Result.needsCleaning() && "Result needs cleaning");
   assert(!Result.hasPtrData() && "Result has not been reset");
 
+  if (PP && PP->PrimaryOnceEnabled) {
+    if (PP->HeaderInfo.getFileInfo(*getFileEntry()).isPragmaPrimaryOnce && !PP->isInPrimaryFile()) {
+      PP->HeaderInfo.MarkFileIncludeOnce(*getFileEntry());
+    }
+  }
+
   // CurPtr - Cache BufferPtr in an automatic variable.
   const char *CurPtr = BufferPtr;
+
+  if (PP && PP->PrimaryOnceActive)
+  {
+    while (*CurPtr != 0)
+      ++CurPtr;
+
+    BufferPtr = CurPtr;
+  }
 
   // Small amounts of horizontal whitespace is very common between tokens.
   if (isHorizontalWhitespace(*CurPtr)) {
