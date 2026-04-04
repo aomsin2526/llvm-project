@@ -146,6 +146,7 @@ class Preprocessor {
   friend class VAOptDefinitionContext;
   friend class VariadicMacroScopeGuard;
 
+public:
   llvm::unique_function<void(const clang::Token &)> OnToken;
   /// Functor for getting the dependency preprocessor directives of a file.
   ///
@@ -161,7 +162,7 @@ class Preprocessor {
   FileManager       &FileMgr;
   SourceManager     &SourceMgr;
   std::unique_ptr<ScratchBuffer> ScratchBuf;
-
+  HeaderSearch      &HeaderInfo;
   ModuleLoader      &TheModuleLoader;
 
   /// External source of macros.
@@ -314,8 +315,6 @@ public:
   /// limited by a constant value, but also an implementation detail.
   /// If no such check point exists, \c nullptr is returned.
   const char *getCheckPoint(FileID FID, const char *Start) const;
-
-  HeaderSearch &HeaderInfo;
 
   // primary_once
   bool PrimaryOnceEnabled;

@@ -3142,7 +3142,7 @@ void Lexer::ReadToEndOfLine(SmallVectorImpl<char> *Result) {
 bool Lexer::LexEndOfFile(Token &Result, const char *CurPtr) {
   if (PP && PP->PrimaryOnceEnabled)
   {
-    if (PP->HeaderInfo.getFileInfo(*getFileEntry()).isPragmaPrimaryOnce) {
+    if (PP->HeaderInfo.getFileInfo(*getFileEntry()).isPragmaPrimaryOnce && PP->SourceMgr.isMainFile(getFileEntry()->getFileEntry())) {
       PP->PrimaryOnceActive = true;
     }
   }
@@ -3748,12 +3748,6 @@ bool Lexer::LexTokenInternal(Token &Result, bool TokAtPhysicalStartOfLine) {
 LexStart:
   assert(!Result.needsCleaning() && "Result needs cleaning");
   assert(!Result.hasPtrData() && "Result has not been reset");
-
-  if (PP && PP->PrimaryOnceEnabled) {
-    if (PP->HeaderInfo.getFileInfo(*getFileEntry()).isPragmaPrimaryOnce && !PP->isInPrimaryFile()) {
-      PP->HeaderInfo.MarkFileIncludeOnce(*getFileEntry());
-    }
-  }
 
   // CurPtr - Cache BufferPtr in an automatic variable.
   const char *CurPtr = BufferPtr;

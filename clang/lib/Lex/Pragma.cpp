@@ -411,14 +411,19 @@ void Preprocessor::HandleMicrosoft__pragma(Token &Tok) {
 
 /// HandlePragmaOnce - Handle \#pragma once.  OnceTok is the 'once'.
 void Preprocessor::HandlePragmaOnce(Token &OnceTok) {
+  if (HeaderInfo.getFileInfo(*getCurrentFileLexer()->getFileEntry()).isPragmaPrimaryOnce) {
+    Diag(OnceTok, diag::err_pp_pragma_once_and_primary_once_at_same_time);
+    return;
+  }
+
   // Don't honor the 'once' when handling the primary source file, unless
   // this is a prefix to a TU, which indicates we're generating a PCH file, or
   // when the main file is a header (e.g. when -xc-header is provided on the
   // commandline).
-  if (isInPrimaryFile() && TUKind != TU_Prefix && !getLangOpts().IsHeaderFile) {
-    Diag(OnceTok, diag::pp_pragma_once_in_main_file);
-    return;
-  }
+  //if (isInPrimaryFile() && TUKind != TU_Prefix && !getLangOpts().IsHeaderFile) {
+  //  Diag(OnceTok, diag::pp_pragma_once_in_main_file);
+  //  return;
+  //}
 
   // Get the current file lexer we're looking at.  Ignore _Pragma 'files' etc.
   // Mark the file as a once-only file now.
@@ -426,16 +431,19 @@ void Preprocessor::HandlePragmaOnce(Token &OnceTok) {
 }
 
 void Preprocessor::HandlePragmaPrimaryOnce(Token &Tok) {
+  if (HeaderInfo.getFileInfo(*getCurrentFileLexer()->getFileEntry()).isPragmaOnce) {
+    Diag(Tok, diag::err_pp_pragma_once_and_primary_once_at_same_time);
+    return;
+  }
+
+  HeaderInfo.MarkFilePrimaryOnce(*getCurrentFileLexer()->getFileEntry());
+
   if (PrimaryOnceEnabled)
     return;
-
   if (!isInPrimaryFile())
     return;
 
-  HeaderInfo.UnmarkFileIncludeOnce(*getCurrentFileLexer()->getFileEntry());
-
   PrimaryOnceEnabled = true;
-  HeaderInfo.MarkFilePrimaryOnce(*getCurrentFileLexer()->getFileEntry());
 }
 
 void Preprocessor::HandlePragmaMark(Token &MarkTok) {

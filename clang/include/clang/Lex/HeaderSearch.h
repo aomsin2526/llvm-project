@@ -560,10 +560,6 @@ public:
     getFileInfo(File).isPragmaOnce = true;
   }
 
-  void UnmarkFileIncludeOnce(FileEntryRef File) {
-    getFileInfo(File).isPragmaOnce = false;
-  }
-
   void MarkFilePrimaryOnce(FileEntryRef File) {
     getFileInfo(File).isPragmaPrimaryOnce = true;
   }
