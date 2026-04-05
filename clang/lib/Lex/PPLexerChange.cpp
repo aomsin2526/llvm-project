@@ -326,6 +326,13 @@ bool Preprocessor::HandleEndOfFile(Token &Result, bool isEndOfMacro) {
   assert(!CurTokenLexer &&
          "Ending a file when currently in a macro!");
 
+  if (!isEndOfMacro && CurLexer && CurLexer->getFileEntry()) {
+    if (HeaderInfo.getFileInfo(*CurLexer->getFileEntry()).isPragmaPrimaryOnce &&
+        SourceMgr.isMainFile(CurLexer->getFileEntry()->getFileEntry())) {
+      PrimaryOnceActive = true;
+    }
+  }
+
   SourceLocation UnclosedSafeBufferOptOutLoc;
 
   if (IncludeMacroStack.empty() &&

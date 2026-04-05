@@ -411,7 +411,14 @@ void Preprocessor::HandleMicrosoft__pragma(Token &Tok) {
 
 /// HandlePragmaOnce - Handle \#pragma once.  OnceTok is the 'once'.
 void Preprocessor::HandlePragmaOnce(Token &OnceTok) {
-  if (HeaderInfo.getFileInfo(*getCurrentFileLexer()->getFileEntry()).isPragmaPrimaryOnce) {
+  if (CurLexer && CurLexer->isPragmaLexer()) {
+    Diag(OnceTok, diag::err_pp_pragma_operator);
+    return;
+  }
+
+  PreprocessorLexer *lexer = getCurrentFileLexer();
+
+  if (HeaderInfo.getFileInfo(*lexer->getFileEntry()).isPragmaPrimaryOnce) {
     Diag(OnceTok, diag::err_pp_pragma_once_and_primary_once_at_same_time);
     return;
   }
@@ -427,16 +434,23 @@ void Preprocessor::HandlePragmaOnce(Token &OnceTok) {
 
   // Get the current file lexer we're looking at.  Ignore _Pragma 'files' etc.
   // Mark the file as a once-only file now.
-  HeaderInfo.MarkFileIncludeOnce(*getCurrentFileLexer()->getFileEntry());
+  HeaderInfo.MarkFileIncludeOnce(*lexer->getFileEntry());
 }
 
 void Preprocessor::HandlePragmaPrimaryOnce(Token &Tok) {
-  if (HeaderInfo.getFileInfo(*getCurrentFileLexer()->getFileEntry()).isPragmaOnce) {
+  if (CurLexer && CurLexer->isPragmaLexer()) {
+    Diag(Tok, diag::err_pp_pragma_operator);
+    return;
+  }
+
+  PreprocessorLexer *lexer = getCurrentFileLexer();
+
+  if (HeaderInfo.getFileInfo(*lexer->getFileEntry()).isPragmaOnce) {
     Diag(Tok, diag::err_pp_pragma_once_and_primary_once_at_same_time);
     return;
   }
 
-  HeaderInfo.MarkFilePrimaryOnce(*getCurrentFileLexer()->getFileEntry());
+  HeaderInfo.MarkFilePrimaryOnce(*lexer->getFileEntry());
 
   if (PrimaryOnceEnabled)
     return;

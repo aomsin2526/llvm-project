@@ -569,6 +569,7 @@ def err_pp_error_opening_file : Error<
 def err_pp_including_mainfile_in_preamble : Error<
   "main file cannot be included recursively when building a preamble">;
 def err_pp_pragma_once_and_primary_once_at_same_time : Error<"can't use #pragma once and primary_once at same time">;
+def err_pp_pragma_operator : Error<"use of _Pragma operator is not allowed">;
 def err_pp_empty_filename : Error<"empty filename">;
 def err_pp_include_too_deep : Error<"#include nested too deeply">;
 def err_pp_expects_filename : Error<"expected \"FILENAME\" or <FILENAME>">;

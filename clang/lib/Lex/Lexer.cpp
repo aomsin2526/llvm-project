@@ -3140,13 +3140,6 @@ void Lexer::ReadToEndOfLine(SmallVectorImpl<char> *Result) {
 /// This returns true if Result contains a token, false if PP.Lex should be
 /// called again.
 bool Lexer::LexEndOfFile(Token &Result, const char *CurPtr) {
-  if (PP && PP->PrimaryOnceEnabled)
-  {
-    if (PP->HeaderInfo.getFileInfo(*getFileEntry()).isPragmaPrimaryOnce && PP->SourceMgr.isMainFile(getFileEntry()->getFileEntry())) {
-      PP->PrimaryOnceActive = true;
-    }
-  }
-
   // If we hit the end of the file while parsing a preprocessor directive,
   // end the preprocessor directive first.  The next token returned will
   // then be the end of file.
