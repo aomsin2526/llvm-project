@@ -2494,6 +2494,12 @@ Preprocessor::ImportAction Preprocessor::HandleHeaderIncludeOrImport(
       Action = (ModuleToImport && !getLangOpts().CompilingPCH) ? Import : Skip;
   }
 
+  if (Action == Enter && File && HeaderInfo.getFileInfo(*File).isPragmaOnlyOnce && ((!IsFirstIncludeOfFile && !(SourceMgr.isMainFile(File->getFileEntry()) && !isInPrimaryFile())) || (SourceMgr.isMainFile(File->getFileEntry()) && isInPrimaryFile()))) {
+    Diag(FilenameTok.getLocation(), 
+        diag::err_pp_pragma_only_once);
+    return {ImportAction::None};
+  }
+
   // Check for circular inclusion of the main file.
   // We can't generate a consistent preamble with regard to the conditional
   // stack if the main file is included again as due to the preamble bounds

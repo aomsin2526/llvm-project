@@ -460,6 +460,17 @@ void Preprocessor::HandlePragmaPrimaryOnce(Token &Tok) {
   PrimaryOnceEnabled = true;
 }
 
+void Preprocessor::HandlePragmaOnlyOnce(Token &Tok) {
+  if (CurLexer && CurLexer->isPragmaLexer()) {
+    Diag(Tok, diag::err_pp_pragma_operator);
+    return;
+  }
+
+  PreprocessorLexer *lexer = getCurrentFileLexer();
+
+  HeaderInfo.MarkFileIncludeOnlyOnce(*lexer->getFileEntry());
+}
+
 void Preprocessor::HandlePragmaMark(Token &MarkTok) {
   assert(CurPPLexer && "No current lexer?");
 
@@ -1040,6 +1051,16 @@ struct PragmaPrimaryOnceHandler : public PragmaHandler {
                     Token &Tok) override {
     PP.CheckEndOfDirective("pragma primary_once");
     PP.HandlePragmaPrimaryOnce(Tok);
+  }
+};
+
+struct PragmaOnlyOnceHandler : public PragmaHandler {
+  PragmaOnlyOnceHandler() : PragmaHandler("only_once") {}
+
+  void HandlePragma(Preprocessor &PP, PragmaIntroducer Introducer,
+                    Token &Tok) override {
+    PP.CheckEndOfDirective("pragma only_once");
+    PP.HandlePragmaOnlyOnce(Tok);
   }
 };
 
@@ -2187,6 +2208,7 @@ struct PragmaFinalHandler : public PragmaHandler {
 void Preprocessor::RegisterBuiltinPragmas() {
   AddPragmaHandler(new PragmaOnceHandler());
   AddPragmaHandler(new PragmaPrimaryOnceHandler());
+  AddPragmaHandler(new PragmaOnlyOnceHandler());
   AddPragmaHandler(new PragmaMarkHandler());
   AddPragmaHandler(new PragmaPushMacroHandler());
   AddPragmaHandler(new PragmaPopMacroHandler());

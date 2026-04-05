@@ -76,6 +76,9 @@ struct HeaderFileInfo {
   LLVM_PREFERRED_TYPE(bool)
   unsigned isPragmaPrimaryOnce : 1;
 
+  LLVM_PREFERRED_TYPE(bool)
+  unsigned isPragmaOnlyOnce : 1;
+
   /// Keep track of whether this is a system header, and if so,
   /// whether it is C++ clean or not.  This can be set by the include paths or
   /// by \#pragma gcc system_header.  This is an instance of
@@ -126,7 +129,7 @@ struct HeaderFileInfo {
   LazyIdentifierInfoPtr LazyControllingMacro;
 
   HeaderFileInfo()
-      : IsLocallyIncluded(false), isImport(false), isPragmaOnce(false), isPragmaPrimaryOnce(false),
+      : IsLocallyIncluded(false), isImport(false), isPragmaOnce(false), isPragmaPrimaryOnce(false), isPragmaOnlyOnce(false),
         DirInfo(SrcMgr::C_User), External(false), isModuleHeader(false),
         isTextualModuleHeader(false), isCompilingModuleHeader(false),
         Resolved(false), IsValid(false) {}
@@ -562,6 +565,10 @@ public:
 
   void MarkFilePrimaryOnce(FileEntryRef File) {
     getFileInfo(File).isPragmaPrimaryOnce = true;
+  }
+
+  void MarkFileIncludeOnlyOnce(FileEntryRef File) {
+    getFileInfo(File).isPragmaOnlyOnce = true;
   }
 
   /// Mark the specified file as a system header, e.g. due to

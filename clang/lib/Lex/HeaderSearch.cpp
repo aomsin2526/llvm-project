@@ -1437,7 +1437,7 @@ bool HeaderSearch::ShouldEnterIncludeFile(Preprocessor &PP,
 
     // If modules aren't enabled then there's no visibility issue. Always
     // respect `#pragma once`.
-    if (!ModulesEnabled || FileInfo.isPragmaOnce)
+    if (!ModulesEnabled || (FileInfo.isPragmaOnce && !FileInfo.isPragmaOnlyOnce))
       return false;
 
     // Ensure FileInfo bits are up to date.
@@ -1508,7 +1508,7 @@ bool HeaderSearch::ShouldEnterIncludeFile(Preprocessor &PP,
     // isPragmaOnce and isImport are only set after the file has been included
     // at least once. If either are set then this is a repeat #include of an
     // include-once file.
-    if (FileInfo.isPragmaOnce ||
+    if ((FileInfo.isPragmaOnce && !FileInfo.isPragmaOnlyOnce) ||
         (FileInfo.isImport && !MaybeReenterImportedFile()))
       return false;
   }
