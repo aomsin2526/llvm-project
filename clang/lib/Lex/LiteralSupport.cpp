@@ -1451,7 +1451,7 @@ void NumericLiteralParser::ParseNumberStartingWithZero(SourceLocation TokLoc) {
   auto _ = llvm::make_scope_exit([&] {
     // If we still have an octal value but we did not see an octal prefix,
     // diagnose as being an obsolescent feature starting in C2y.
-    if (radix == 8 && LangOpts.C2y && !hadError && !IsSingleZero)
+    if (radix == 8 /*&& LangOpts.C2y*/ && !hadError && !IsSingleZero)
       Diags.Report(TokLoc, diag::warn_unprefixed_octal_deprecated);
   });
 
