@@ -8,6 +8,9 @@
 
 #include "ClangdMain.h"
 
+extern bool aomsin_IsClangd;
+
 int main(int argc, char **argv) {
+  aomsin_IsClangd = true;
   return clang::clangd::clangdMain(argc, argv);
 }

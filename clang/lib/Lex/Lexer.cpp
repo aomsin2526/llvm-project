@@ -3135,6 +3135,8 @@ void Lexer::ReadToEndOfLine(SmallVectorImpl<char> *Result) {
   }
 }
 
+bool aomsin_IsClangd = false;
+
 /// LexEndOfFile - CurPtr points to the end of this file.  Handle this
 /// condition, reporting diagnostics and handling other edge cases as required.
 /// This returns true if Result contains a token, false if PP.Lex should be
@@ -3178,7 +3180,7 @@ bool Lexer::LexEndOfFile(Token &Result, const char *CurPtr) {
 
   // If we are in a #if directive, emit an error.
   while (!ConditionalStack.empty()) {
-    if (PP->getCodeCompletionFileLoc() != FileLoc && 0)
+    if (PP->getCodeCompletionFileLoc() != FileLoc && !aomsin_IsClangd)
       PP->Diag(ConditionalStack.back().IfLoc,
                diag::err_pp_unterminated_conditional);
     ConditionalStack.pop_back();
