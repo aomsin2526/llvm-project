@@ -3178,7 +3178,7 @@ bool Lexer::LexEndOfFile(Token &Result, const char *CurPtr) {
 
   // If we are in a #if directive, emit an error.
   while (!ConditionalStack.empty()) {
-    if (PP->getCodeCompletionFileLoc() != FileLoc)
+    if (PP->getCodeCompletionFileLoc() != FileLoc && 0)
       PP->Diag(ConditionalStack.back().IfLoc,
                diag::err_pp_unterminated_conditional);
     ConditionalStack.pop_back();
