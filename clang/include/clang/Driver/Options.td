@@ -2299,6 +2299,10 @@ defm force_enable_int128 : BoolFOption<"force-enable-int128",
   PosFlag<SetTrue, [], [ClangOption, CC1Option], "Enable">,
   NegFlag<SetFalse, [], [ClangOption], "Disable">,
   BothFlags<[], [ClangOption], " support for int128_t type">>;
+def fbitint_max_align : Joined<["-"], "fbitint-max-align=">, Group<f_Group>,
+  Visibility<[ClangOption, CC1Option, CLOption]>,
+  HelpText<"Set the maximum alignment of _BitInt type">,
+  MarshallingInfoInt<TargetOpts<"BitIntMaxAlign">, "0">;
 defm keep_static_consts : BoolFOption<"keep-static-consts",
   CodeGenOpts<"KeepStaticConsts">, DefaultFalse,
   PosFlag<SetTrue, [], [ClangOption, CC1Option], "Keep">,

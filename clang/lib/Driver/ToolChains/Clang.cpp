@@ -7933,6 +7933,9 @@ void Clang::ConstructJob(Compilation &C, const JobAction &JA,
       CmdArgs.push_back("-fforce-enable-int128");
   }
 
+  if (Arg* A = Args.getLastArg(options::OPT_fbitint_max_align))
+    CmdArgs.push_back(Args.MakeArgString(Twine("-fbitint-max-align=") + A->getValue()));
+
   Args.addOptInFlag(CmdArgs, options::OPT_fkeep_static_consts,
                     options::OPT_fno_keep_static_consts);
   Args.addOptInFlag(CmdArgs, options::OPT_fkeep_persistent_storage_variables,

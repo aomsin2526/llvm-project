@@ -71,6 +71,8 @@ public:
   /// If given, enables support for __int128_t and __uint128_t types.
   bool ForceEnableInt128 = false;
 
+  unsigned BitIntMaxAlign = 0;
+
   /// \brief If enabled, use 32-bit pointers for accessing const/local/shared
   /// address space.
   bool NVPTXUseShortPointers = false;

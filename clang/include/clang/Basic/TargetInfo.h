@@ -546,6 +546,9 @@ public:
   /// getBitIntMaxAlign() - Returns the maximum possible alignment of
   /// '_BitInt' and 'unsigned _BitInt'.
   unsigned getBitIntMaxAlign() const {
+    if (getTargetOpts().BitIntMaxAlign != 0)
+      return (getTargetOpts().BitIntMaxAlign * 8);
+
     return BitIntMaxAlign.value_or(LongLongAlign);
   }
 
