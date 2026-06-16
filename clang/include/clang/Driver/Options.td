@@ -1443,15 +1443,15 @@ def libomptarget_nvptx_bc_path_EQ : Joined<["--"], "libomptarget-nvptx-bc-path="
   HelpText<"Path to libomptarget-nvptx bitcode library">;
 def libomptarget_spirv_bc_path_EQ : Joined<["--"], "libomptarget-spirv-bc-path=">, Group<i_Group>,
   HelpText<"Path to libomptarget-spirv bitcode library">;
-def dD : Flag<["-"], "dD">, Group<d_Group>, Visibility<[ClangOption, CC1Option]>,
+def dD : Flag<["-"], "dD">, Group<d_Group>, Visibility<[ClangOption, CC1Option, CLOption]>,
   HelpText<"Print macro definitions in -E mode in addition to normal output">;
-def dI : Flag<["-"], "dI">, Group<d_Group>, Visibility<[ClangOption, CC1Option]>,
+def dI : Flag<["-"], "dI">, Group<d_Group>, Visibility<[ClangOption, CC1Option, CLOption]>,
   HelpText<"Print include directives in -E mode in addition to normal output">,
   MarshallingInfoFlag<PreprocessorOutputOpts<"ShowIncludeDirectives">>;
 def dE : Flag<["-"], "dE">, Group<d_Group>, Visibility<[CC1Option]>,
   HelpText<"Print embed directives in -E mode in addition to normal output">,
   MarshallingInfoFlag<PreprocessorOutputOpts<"ShowEmbedDirectives">>;
-def dM : Flag<["-"], "dM">, Group<d_Group>, Visibility<[ClangOption, CC1Option, FlangOption, FC1Option]>,
+def dM : Flag<["-"], "dM">, Group<d_Group>, Visibility<[ClangOption, CC1Option, CLOption, FlangOption, FC1Option]>,
   HelpText<"Print macro definitions in -E mode instead of normal output">;
 def dead__strip : Flag<["-"], "dead_strip">;
 def dependency_file : Separate<["-"], "dependency-file">,
@@ -2296,7 +2296,7 @@ defm jump_tables : BoolFOption<"jump-tables",
   BothFlags<[], [ClangOption], " jump tables for lowering switches">>;
 defm force_enable_int128 : BoolFOption<"force-enable-int128",
   TargetOpts<"ForceEnableInt128">, DefaultFalse,
-  PosFlag<SetTrue, [], [ClangOption, CC1Option], "Enable">,
+  PosFlag<SetTrue, [], [ClangOption, CC1Option, CLOption], "Enable">,
   NegFlag<SetFalse, [], [ClangOption], "Disable">,
   BothFlags<[], [ClangOption], " support for int128_t type">>;
 def fbitint_max_align : Joined<["-"], "fbitint-max-align=">, Group<f_Group>,
